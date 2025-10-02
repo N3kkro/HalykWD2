@@ -32,7 +32,8 @@ class _MainState extends State<Main> {
             onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => Android()));
             }, 
-            child: Text('Android'))
+            child: Text('Android')),
+            
           ],
         ),
         

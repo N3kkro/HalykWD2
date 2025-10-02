@@ -2,7 +2,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        flatDir{
+        flatDir {
             dirs("libs", "app/libs")
         }
     }

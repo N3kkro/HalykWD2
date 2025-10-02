@@ -1,3 +1,4 @@
+import 'package:_halwidget_/android_flutter/PartnerPayBridge.dart';
 import 'package:flutter/material.dart';
 import 'package:_halwidget_/QRcode.dart';
 import 'appBar.dart';
@@ -37,6 +38,10 @@ class _AndroidState extends State<Android> {
 
       child: Column(
           children: [
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CheckPay()));
+            }, child: Text("Press")),
               Container(
               width: double.infinity,
               height: 40,

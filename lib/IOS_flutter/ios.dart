@@ -21,7 +21,7 @@ class _IOS_settingsState extends State<IOS_settings> {
   final ProcessList processes = new ProcessList();
   @override
   Widget build(BuildContext context) {
-    return Scaffold( // instead of scaffold use cupertinoPageScaffold and CupertinoListTile
+    return Scaffold( 
       backgroundColor: Color(0xFFF2F2F7),
       appBar: CustomAppBar_IOS(),
       body:Column(

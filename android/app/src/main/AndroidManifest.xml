@@ -38,7 +38,7 @@
             tools:replace="android:authorities" />
 
         <activity
-            android:name=".ExampleDemoActivity"
+            android:name=".OnBoarding"
             android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>
@@ -49,6 +49,8 @@
                 <data android:host="halykbank.kz" />
             </intent-filter>
         </activity>
+
+
 
         <provider
             android:name="androidx.core.content.FileProvider"
