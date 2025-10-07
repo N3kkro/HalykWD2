@@ -12,12 +12,7 @@ import kz.halyk.partner.monolith.PartnerCallback
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        PartnerPaySdk.init(this)
-        PartnerPaySdk.languageFlow.value = SdkLanguage.RUSSIAN
+        PartnerPaySdk.init(this, SdkLanguage.RUSSIAN)
+        
     }
 }
-     class SdkLanguage {
-     KAZAKH,
-     RUSSIAN,
-     ENGLISH
- }

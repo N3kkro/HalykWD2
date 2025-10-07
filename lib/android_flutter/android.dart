@@ -204,18 +204,6 @@ class _AndroidState extends State<Android> {
           if (process.selectedValue == 'QR платеж') QRcodeFields(), 
           if(process.selectedValue == "Onboarding") Onboarding(),
           if(process.selectedValue == "Card select for refill") Refill(),
-          Padding(
-            padding: EdgeInsets.fromLTRB  (16,32,16,16),
-            child: ElevatedButton(
-            onPressed:  ()    {},
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(MediaQuery.widthOf(context) * 0.95, 55),
-                backgroundColor: Color(0xFF2AA65C),
-                foregroundColor: Colors.white,
-              ),
-              child: Text('Начать')
-              ),
-          ),
       ],//Column
         ),
       ),
@@ -248,19 +236,20 @@ class Onboarding extends StatefulWidget {
 class _OnboardingState extends State<Onboarding> {
   TextEditingController coorelationId = TextEditingController();
   //input to controller (if != onBoardingId && ... )
-  static const platform = MethodChannel("partner_sdk");
-  Future<void> check() async{
-    try{
-      var result = platform.invokeMethod("checkPartner");
-      print(result);
-    }catch(e){
-      print(e);
+    String status = "";
+    static var event_channel = EventChannel("onboarding_channel");
+    void onBoardingCheck(){
+      event_channel.receiveBroadcastStream().listen((event) {
+        print("onBoarding $event")
+      },onError: (error){
+        print("Error: $error");
+      });
     }
-  }
+  
   void initState(){
     super.initState();
-    check();
-  } 
+    }
+   
   String _status = "";
   @override
   Widget build(BuildContext context) {
@@ -280,12 +269,21 @@ class _OnboardingState extends State<Onboarding> {
                       ),
                     ),
               ),
-                  ElevatedButton(onPressed: (){}, child: Text("Press")),
-                  SizedBox(width: 20),
-                  Text(_status),
             ],
           ),
         ),
+        Padding(
+            padding: EdgeInsets.fromLTRB  (16,32,16,16),
+            child: ElevatedButton(
+            onPressed: (){},
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(MediaQuery.widthOf(context) * 0.95, 55),
+                backgroundColor: Color(0xFF2AA65C),
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Начать')
+              ),
+          ),
       ],
     );
   }

@@ -20,7 +20,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.EventChannel
 class MainActivity : AppCompatActivity() {
     private lateinit var flutterEngine: FlutterEngine
-    private val EVENT_CHANNEL = "partner_pay_channel"
+    private val METHOD_CHANNEL = "partner_pay_channel"
     private var eventSink: EventChannel.EventSink? = null
     private val partnerToken = "WprHVisLzUpzcfKn_Mobile_Test"
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,52 +30,59 @@ class MainActivity : AppCompatActivity() {
             DartExecutor.DartEntrypoint.createDefault()
         )
         //Канал
-        EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENT_CHANNEL)
-            .setStreamHandler(
-            object: EventChannel.StreamHandler{
-                override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-                    eventSink = events
-                    checkOnBoarding();
-                }
-
-                override fun onCancel(arguments: Any?) {
-                    eventSink = null
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when(call.method){
+                    "checkStatus" ->{
+                        val correlationId = call.argument<String>("correlationId");
+                        Log.d("FlutterToNative", "CorrelationId: $correlationId")
+                        checkOnBoarding(correlationId, result);
+                    }
+                    else -> result.notImplemented();
                 }
             }
-            )
-        
+
     }
 
-    private fun checkOnBoarding(){
+    private fun checkOnBoarding(correlationId: String?, result: MethodChannel.Result){
         lifecycleScope.launch {
-            val status = PartnerPaySdk.isAuthorizationValid(
-                this@MainActivity,
-                partnerToken
-            )
-            val map = mapOf(
-                "status" to status.name
-            )
-            eventSink?.success(map)
-            when(status){
+            try {
+                val status = PartnerPaySdk.isAuthorizationValid(
+                    this@MainActivity,
+                    partnerToken
+                )
+                val responce = mapOf(
+                    "status" to status.name,
+                    "correlationId" to (correlationId ?: "Unknown")
+                )
+                result.success(responce);
+
+            when (status) {
                 UserAuthorization.VALID -> {
                     startActivity(Intent(this@MainActivity, OnBoarding::class.java));
                     finish()
                 }
+
                 UserAuthorization.NOT_ONBOARDED -> {
                     startActivity(Intent(this@MainActivity, OnBoarding::class.java))
                     Log.e("OnBoarding", "Онбординг токен недействителен")
                 }
+
                 UserAuthorization.ROOT_TOKEN_INVALID -> {
                     Log.e("OnBoarding", "Онбординг токен недействителен")
                 }
+
                 UserAuthorization.ROOT_TOKEN_EXPIRED -> {
                     Log.w("OnBoarding", "Онбординг токен истёк")
                 }
+
                 UserAuthorization.UNKNOWN -> {
                     Log.d("OnBoarding", "Онбординг токен неизвестен")
                 }
             }
-
+        }catch(e: Exception){
+                result.error("Error: $e", e.message, null)
+            }
         }
     }
 }

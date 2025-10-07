@@ -15,7 +15,7 @@ class _CheckPayState extends State<CheckPay> {
     print("$status");
   }
   @override
-  void initState() {
+  void initState() {    
    super.initState();
    _eventChannel.receiveBroadcastStream().listen((event) {
      final data = Map<String, dynamic>.from(event);
